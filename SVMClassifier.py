@@ -87,3 +87,30 @@ class SVMClf(object):
         plt.plot(x0, decision_boundary, "r-.", linewidth=2)
         plt.plot(x0, gutter_up, "k--", linewidth=2)
         plt.plot(x0, gutter_down, "k--", linewidth=2)
+
+
+    @staticmethod
+    def plot_dataset(X, y , limits=None):
+        fig = plt.figure(figsize=(12,8))
+        ax = plt.axes()
+        ax.plot(X[:, 0][y==0], X[:, 1][y==0], "rs")
+        ax.plot(X[:, 0][y==1], X[:, 1][y==1], "k^")
+        ax.set_xlabel(r"$x_1$", fontsize = 20)
+        ax.set_ylabel(r"$x_2$", fontsize = 20, rotation=0)
+        if limits!=None:
+            ax.axis(limits)
+
+    @staticmethod
+    def plot_predictions(model, limits):
+        x0s = np.linspace(limits[0], limits[1], 100)
+        x1s = np.linspace(limits[2], limits[3], 100)
+        x0, x1 = np.meshgrid(x0s, x1s)
+        X = np.c_[x0.ravel(), x1.ravel()]
+        y_pred = model.predict(X).reshape(x0.shape)
+        y_decision = model.decision_function(X).reshape(x0.shape)
+
+        fig = plt.figure(figsize=(12,8))
+        ax = plt.axes()
+
+        ax.contourf(x0, x1, y_pred, cmap="rainbow", alpha=0.2)
+        ax.contourf(x0, x1, y_decision, cmap="rainbow", alpha=0.1)
