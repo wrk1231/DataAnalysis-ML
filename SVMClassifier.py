@@ -27,9 +27,6 @@ class SVMClf(object):
         self.trained = True
 
     def get_parameters(self, model=None):
-
-
-
     
         self.support_vectors = self.model.support_vectors_
         self.w = self.model.coef_[0]
