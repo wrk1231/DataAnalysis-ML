@@ -19,9 +19,6 @@ class SVMClf(object):
         self.upperBound = np.max(X) + 0.2*np.std(X)
         self.new_X = np.linspace(self.lowerBound, self.upperBound, 500)
 
-
-
-
     def train_model(self):
         self.model.fit(self.X, self.y)
         self.trained = True
@@ -37,8 +34,6 @@ class SVMClf(object):
         self.margin = 1/self.w[1]
         self.gutter_up   = self.decision_boundary + self.margin
         self.gutter_down = self.decision_boundary - self.margin
-
-
 
     def model_predict(self, new_data):
 
