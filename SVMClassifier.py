@@ -131,3 +131,50 @@ class SVMClf(object):
                     s=300, linewidth=1, facecolors='none');
         ax.set_xlim(xlim)
         ax.set_ylim(ylim)
+
+
+from sklearn.svm import LinearSVR
+
+class   SVMRegression(object):
+
+    def __init__(self, X, y, epsilon, **kwargs):
+
+        self.X = X
+        self.y = y
+        self.epsilon = epsilon
+        self.model = LinearSVR(epsilon=epsilon, **kwargs) 
+
+    def train_model(self):
+        self.model.fit(self.X, self.y)
+        self.epsilon = self.model.epsilon
+        self.y_pred = self.model.predict(self.X)
+
+    def get_support_vectors(self):
+        """
+        Get the index of points which is off the street
+        """
+        self.if_off_margin = (np.abs(self.y - self.y_pred) >= self.epsilon)
+        self.idx_support_ = np.argwhere(self.if_off_margin)
+        return self.idx_support_
+
+    def model_predict(self, x_new):
+        return self.model.predict(x_new)
+
+    def plot_svm_regression(self, axes):
+        """
+        Plot SVM Regression
+        """
+        x_new = np.linspace(axes[0], axes[1], 100).reshape(100, 1)
+        y_estimate = self.model.predict(x_new)
+
+        plt.plot(x_new, y_estimate, "k-", linewidth=2, label="Prediction of y")
+        plt.plot(x_new, y_estimate + self.epsilon, "r--", label="Upper Bound")
+        plt.plot(x_new, y_estimate - self.epsilon, "g--", label="Lower Bound")
+        
+        plt.scatter(self.X[self.idx_support_], self.y[self.idx_support_], s=180, facecolors='#FFAAAA')
+        plt.plot(self.X, self.y, "bo")
+        plt.xlabel(r"$x_1$", fontsize=18)
+        plt.ylabel(r"$y$", fontsize=18, rotation=0)
+        plt.legend(loc="best", fontsize=18)
+        plt.axis(axes)
+
