@@ -25,31 +25,38 @@ for axi, depth in zip(ax, range(1, 5)):
 
 class DecisionTreeVisualization(object):
 
-    @staticmethod
-    def visualize_tree(estimator, X, y, boundaries=True, xlim=None, ylim=None, ax=None):
+    def __init__(self, max_depth, X, y, boundaries=True):
+        self.if_boundaries = boundaries ## if plot boundary
+        self.max_depth =max_depth ## depth of the decision tree
+
+        self.X = X
+        self.y = y
+        self.model = DecisionTreeClassifier(max_depth=self.max_depth)
+
+
+    def visualize_tree(self,  X, y, boundaries=True,  ax=None):
         ax = ax or plt.gca()
         
         # Plot the training points
-        ax.scatter(X[:, 0], X[:, 1], c=y, s=30, cmap='viridis', clim=(y.min(), y.max()), zorder=3)
+        ax.scatter(self.X[:, 0], self.X[:, 1], c=self.y, s=30, cmap='rainbow', clim=(self.y.min(), self.y.max()), zorder=3)
         ax.axis('tight')
         ax.axis('off')
-        if xlim is None:
-            xlim = ax.get_xlim()
-        if ylim is None:
-            ylim = ax.get_ylim()
-        
-        # fit the estimator
-        estimator.fit(X, y)
+
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim() 
+
+        self.model.fit(self.X, self.y)
+
         xx, yy = np.meshgrid(np.linspace(*xlim, num=200),
                             np.linspace(*ylim, num=200))
-        Z = estimator.predict(np.c_[xx.ravel(), yy.ravel()])
+        Z = self.model.predict(np.c_[xx.ravel(), yy.ravel()])
 
         # Put the result into a color plot
         n_classes = len(np.unique(y))
         Z = Z.reshape(xx.shape)
         contours = ax.contourf(xx, yy, Z, alpha=0.3,
                             levels=np.arange(n_classes + 1) - 0.5,
-                            cmap='viridis', clim=(y.min(), y.max()),
+                            cmap='rainbow', clim=(self.y.min(), self.y.max()),
                             zorder=1)
 
         ax.set(xlim=xlim, ylim=ylim)
@@ -57,7 +64,7 @@ class DecisionTreeVisualization(object):
         # Plot the decision boundaries
         def plot_boundaries(i, xlim, ylim):
             if i >= 0:
-                tree = estimator.tree_
+                tree = self.model.tree_
             
                 if tree.feature[i] == 0:
                     ax.plot([tree.threshold[i], tree.threshold[i]], ylim, '-k', zorder=2)
