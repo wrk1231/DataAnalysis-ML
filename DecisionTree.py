@@ -41,3 +41,6 @@ def plot_decision_boundary(clf, X, y, axes=[0, 7.5, 0, 3]):
     ax.set_xlabel(r"$x_1$", fontsize=18)
     ax.set_ylabel(r"$x_2$", fontsize=18, rotation=0)
     ax.axis(axes)
+
+
+
